@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+    <groupId>com.opengamma.strata</groupId>
+    <artifactId>strata-parent</artifactId>
+    <version>2.3.3-SNAPSHOT</version>
+    <relativePath>..</relativePath>
+  </parent>  
+  <artifactId>strata-basics</artifactId>
+  <packaging>jar</packaging>
+  <name>Strata-Basics</name>
+  <description>Basic aspects of financial markets</description>
+
+  <!-- ==================================================================== -->
+  <dependencies>
+    <!-- OpenGamma -->
+    <dependency>
+      <groupId>com.opengamma.strata</groupId>
+      <artifactId>strata-collect</artifactId>
+    </dependency>
+
+    <!-- Testing -->
+    <dependency>
+      <groupId>com.opengamma.strata</groupId>
+      <artifactId>strata-collect</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <!-- ==================================================================== -->
+  <properties>
+    <jpms.module.name>com.opengamma.strata.basics</jpms.module.name>
+    <!-- Locate the root directory of the multi-module build -->
+    <root.dir>${project.basedir}/../..</root.dir>
+    <!-- Properties for maven-javadoc-plugin -->
+    <windowtitle>OpenGamma Strata Basics</windowtitle>
+    <doctitle><![CDATA[<h1>OpenGamma Strata Basics API</h1>]]></doctitle>
+  </properties>
+
+</project>
