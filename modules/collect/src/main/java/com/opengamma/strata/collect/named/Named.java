@@ -5,49 +5,47 @@
  */
 package com.opengamma.strata.collect.named;
 
-import java.lang.reflect.Method;
-
 import com.opengamma.strata.collect.Unchecked;
+
+import java.lang.reflect.Method;
 
 /**
  * A named instance.
  * <p>
- * This simple interface is used to define objects that can be identified by a unique name.
- * The name contains enough information to be able to recreate the instance.
+ * 该接口用于定义可由唯一名称标识的对象。该名称包含足够的信息，可以重新创建实例。
  * <p>
- * Implementations should provide a static method {@code of(String)} that allows the
- * instance to be created from the name.
+ * 实现类应该提供一个静态方法{@code of(String)}，允许通过名称创建实例（反射）。
  */
 public interface Named {
 
-  /**
-   * Obtains an instance of the specified named type by name.
-   * <p>
-   * This method operates by reflection.
-   * It requires a static method {@code of(String)} method to be present on the type specified.
-   * If the method does not exist an exception is thrown.
-   *
-   * @param <T>  the named type
-   * @param type  the named type with the {@code of(String)} method
-   * @param name  the name to find
-   * @return the instance of the named type
-   * @throws IllegalArgumentException if the specified name could not be found
-   */
-  public static <T extends Named> T of(Class<T> type, String name) {
-    return Unchecked.wrap(() -> {
-      Method method = type.getMethod("of", String.class);
-      return type.cast(method.invoke(null, name));
-    });
-  }
+    /**
+     * 通过名称获取指定命名类型的实例。
+     * <p>
+     * 此方法通过反射操作。
+     * 要求在传入的type中存在静态方法{@code of(String)}。如果不存在，则引发异常。
+     *
+     * @param <T>  clazz
+     * @param type the named type with the {@code of(String)} method
+     * @param name the name to find
+     * @return the instance of the named type
+     * @throws IllegalArgumentException if the specified name could not be found
+     */
+    public static <T extends Named> T of(Class<T> type, String name) {
+        return Unchecked.wrap(() -> {
+            Method method = type.getMethod("of", String.class);
+            return type.cast(method.invoke(null, name));
+        });
+    }
 
-  //-------------------------------------------------------------------------
-  /**
-   * Gets the unique name of the instance.
-   * <p>
-   * The name contains enough information to be able to recreate the instance.
-   * 
-   * @return the unique name
-   */
-  public abstract String getName();
+    //-------------------------------------------------------------------------
+
+    /**
+     * Gets the unique name of the instance.
+     * <p>
+     * The name contains enough information to be able to recreate the instance.
+     *
+     * @return the unique name
+     */
+    public abstract String getName();
 
 }
