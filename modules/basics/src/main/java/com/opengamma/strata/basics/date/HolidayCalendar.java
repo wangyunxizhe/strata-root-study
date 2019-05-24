@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 import static com.opengamma.strata.basics.date.LocalDateUtils.plusDays;
 
 /**
- * 将日期分类为假日或工作日的工具类。
+ * 将日期分类为假日或工作日的接口类。
  * <p>
  * 许多财务计算都需要知道日期是不是营业日。
  * 这个类概括了这些问题，每一天都被视为假日或营业日。周末实际上被视为一种特殊的假日。
