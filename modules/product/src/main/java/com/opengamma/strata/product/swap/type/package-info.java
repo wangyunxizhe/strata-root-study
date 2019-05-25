@@ -5,6 +5,6 @@
  */
 
 /**
- * Conventions and templates to aid the construction of rate swaps.
+ * 用于帮助构建swap（利率互换）的各種Conventions（约定）和模板。
  */
 package com.opengamma.strata.product.swap.type;
