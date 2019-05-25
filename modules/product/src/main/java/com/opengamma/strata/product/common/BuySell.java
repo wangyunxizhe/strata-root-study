@@ -13,7 +13,7 @@ import com.opengamma.strata.collect.named.EnumNames;
 import com.opengamma.strata.collect.named.NamedEnum;
 
 /**
- * Flag indicating whether a trade is "buy" or "sell".
+ * 标识“买入”还是“卖出”的枚举类
  * <p>
  * Specifies whether the financial instrument is buy-side or sell-side.
  * For example, in a Forward Rate Agreement the buyer receives the floating rate
