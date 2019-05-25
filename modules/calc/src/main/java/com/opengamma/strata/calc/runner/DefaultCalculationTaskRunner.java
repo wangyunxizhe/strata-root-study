@@ -70,7 +70,7 @@ final class DefaultCalculationTaskRunner implements CalculationTaskRunner {
         return new DefaultCalculationTaskRunner(executor);
     }
 
-    // create an executor with daemon threads
+    // 使用守护进程线程创建执行器（一个线程池）
     private static ExecutorService createExecutor(int threads) {
         int effectiveThreads = (threads <= 0 ? Runtime.getRuntime().availableProcessors() : threads);
         ThreadFactory defaultFactory = Executors.defaultThreadFactory();
