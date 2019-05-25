@@ -24,6 +24,8 @@ final class StandardReferenceData {
 
     static {
         Map<ReferenceDataId<?>, Object> map = new HashMap<>();
+        //获取modules\basics\src\main\resources\META-INF\com\opengamma\strata\config\base\HolidayCalendarDefaultData.ini
+        //中的参考数据组装成{id=实例对象}的map集合
         for (HolidayCalendar cal : HolidayCalendars.extendedEnum().lookupAllNormalized().values()) {
             map.put(cal.getId(), cal);
         }
