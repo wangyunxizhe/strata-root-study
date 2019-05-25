@@ -5,11 +5,10 @@
  */
 
 /**
- * Basic types for modelling reference data.
+ * 建模参考数据的基本类型。
  * <p>
- * Reference data is used to capture the slow-moving data necessary to perform calculations,
- * such as holiday calendars and securities.
- * The main reference data interface is {@link com.opengamma.strata.basics.ReferenceData ReferenceData}
- * which is keyed by {@link com.opengamma.strata.basics.ReferenceDataId ReferenceDataId}.
+ * 参考数据用于捕获执行计算所需的缓慢移动的数据，如假日日历和证券。
+ * 主参考数据接口 {@link com.opengamma.strata.basics.ReferenceData ReferenceData}
+ * 由 {@link com.opengamma.strata.basics.ReferenceDataId ReferenceDataId}键控.
  */
 package com.opengamma.strata.basics;
