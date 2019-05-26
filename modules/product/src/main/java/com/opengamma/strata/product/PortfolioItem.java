@@ -5,37 +5,35 @@
  */
 package com.opengamma.strata.product;
 
-import java.util.Optional;
-
 import com.opengamma.strata.basics.CalculationTarget;
 import com.opengamma.strata.basics.StandardId;
 
+import java.util.Optional;
+
 /**
- * An item in a portfolio.
+ * 该接口表示投资组合中的项目。
  * <p>
  * This represents a single item in a portfolio.
- * Typically a portfolio will consist of {@linkplain Trade trades} and {@linkplain Position positions}.
+ * 这表示投资组合中的单个项目。通常，投资组合由{@linkplain Trade trades}和{@linkplain Position positions}组成。
  * <p>
- * Implementations of this interface must be immutable beans.
+ * 此接口的实现必须是不可变的bean。
  */
 public interface PortfolioItem extends CalculationTarget {
 
   /**
-   * Gets the additional information about the portfolio item.
+   * 获取有关项目组合项的其他信息。
    * 
    * @return the additional information
    */
   public abstract PortfolioItemInfo getInfo();
 
   /**
-   * Gets the primary identifier for the portfolio item, optional.
+   * 获取项目组合项的主标识符（可选）。
    * <p>
-   * The identifier is used to identify the portfolio item.
-   * It will typically be an identifier in an external data system.
+   * 标识符用于标识项目组合项。它通常是外部数据系统中的标识符。
    * <p>
-   * A portfolio item may have multiple active identifiers. Any identifier may be chosen here.
-   * Certain uses of the identifier, such as storage in a database, require that the
-   * identifier does not change over time, and this should be considered best practice.
+   * 一个项目组合项可以有多个活动标识符。可以在此处选择任何标识符。
+   * 标识符的某些用法（如数据库中的存储）要求标识符不随时间变化，这应被视为最佳做法。
    * 
    * @return the identifier, optional
    */
@@ -44,9 +42,9 @@ public interface PortfolioItem extends CalculationTarget {
   }
 
   /**
-   * Summarizes the portfolio item.
+   * 总结项目组合项。
    * <p>
-   * This provides a summary, including a human readable description.
+   * 这提供了一个摘要，包括一个可读的描述。
    * 
    * @return the summary of the item
    */
