@@ -8,10 +8,10 @@ package com.opengamma.strata.basics;
 /**
  * The target of calculation within a system.
  * <p>
- * All financial instruments that can be the target of calculations implement this marker interface.
- * For example, a trade or position.
+ * 所有可以作为计算目标的金融工具都实现了这个标记接口。
+ * 例如，trade或position
  * <p>
- * All implementations of this interface must be immutable and thread-safe.
+ * 此接口的所有实现都必须是不可变的且线程安全的。
  */
 public interface CalculationTarget {
 
