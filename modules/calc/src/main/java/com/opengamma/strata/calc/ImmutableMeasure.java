@@ -5,17 +5,7 @@
  */
 package com.opengamma.strata.calc;
 
-import java.io.Serializable;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.regex.Pattern;
-
-import org.joda.beans.Bean;
-import org.joda.beans.BeanBuilder;
-import org.joda.beans.ImmutableBean;
-import org.joda.beans.JodaBeanUtils;
-import org.joda.beans.MetaBean;
-import org.joda.beans.MetaProperty;
+import org.joda.beans.*;
 import org.joda.beans.gen.BeanDefinition;
 import org.joda.beans.gen.ImmutableValidator;
 import org.joda.beans.gen.PropertyDefinition;
@@ -24,15 +14,20 @@ import org.joda.beans.impl.direct.DirectMetaProperty;
 import org.joda.beans.impl.direct.DirectMetaPropertyMap;
 import org.joda.beans.impl.direct.DirectPrivateBeanBuilder;
 
+import java.io.Serializable;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.regex.Pattern;
+
 /**
- * The default, immutable implementation of {@link Measure}.
+ * 默认的、不可变的 {@link Measure}.
  */
 @BeanDefinition(builderScope = "private")
 public final class ImmutableMeasure
     implements Measure, ImmutableBean, Serializable {
 
   /**
-   * Pattern for checking the name.
+   * name的格式
    * It must only contains the characters A-Z, a-z, 0-9 and -.
    */
   private static final Pattern NAME_PATTERN = Pattern.compile("[A-Za-z0-9-]+");
@@ -46,7 +41,7 @@ public final class ImmutableMeasure
   private final String name;
 
   /**
-   * Flag indicating whether measure values should be automatically converted to the reporting currency.
+   * 指示度量值是否应自动转换为报告货币的标志。
    */
   @PropertyDefinition(overrideGet = true)
   private final boolean currencyConvertible;
@@ -61,7 +56,7 @@ public final class ImmutableMeasure
   }
 
   /**
-   * Returns a measure with the specified name whose values will be automatically converted to the reporting currency.
+   * 返回具有指定名称的度量值，其值将自动转换为报表货币。
    * <p>
    * Measure names must only contains the characters A-Z, a-z, 0-9 and -.
    *
