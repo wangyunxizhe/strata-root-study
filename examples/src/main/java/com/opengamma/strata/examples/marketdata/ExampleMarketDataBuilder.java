@@ -5,23 +5,6 @@
  */
 package com.opengamma.strata.examples.marketdata;
 
-import static com.opengamma.strata.collect.Guavate.toImmutableList;
-
-import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
 import com.opengamma.strata.basics.currency.Currency;
@@ -36,18 +19,28 @@ import com.opengamma.strata.data.ObservableId;
 import com.opengamma.strata.loader.csv.FixingSeriesCsvLoader;
 import com.opengamma.strata.loader.csv.QuotesCsvLoader;
 import com.opengamma.strata.loader.csv.RatesCurvesCsvLoader;
-import com.opengamma.strata.market.curve.RatesCurveGroup;
 import com.opengamma.strata.market.curve.CurveId;
+import com.opengamma.strata.market.curve.RatesCurveGroup;
 import com.opengamma.strata.market.observable.QuoteId;
 import com.opengamma.strata.measure.rate.RatesMarketDataLookup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.time.LocalDate;
+import java.util.*;
+
+import static com.opengamma.strata.collect.Guavate.toImmutableList;
 
 /**
- * Builds a market data snapshot from user-editable files in a prescribed directory structure.
+ * 在指定的目录结构中，从用户可编辑文件构建市场数据快照.
  * <p>
- * Descendants of this class provide the ability to source this directory structure from any
- * location.
+ * 此类的后代提供了从任何位置获取此目录结构的能力。
  * <p>
- * The directory structure must look like:
+ * 目录结构必须如下所示：
  * <ul>
  *   <li>root
  *   <ul>
@@ -68,30 +61,28 @@ public abstract class ExampleMarketDataBuilder {
 
   private static final Logger log = LoggerFactory.getLogger(ExampleMarketDataBuilder.class);
 
-  /** The name of the subdirectory containing historical fixings. */
+  /** 包含历史附件的子目录的名称。 */
   private static final String HISTORICAL_FIXINGS_DIR = "historical-fixings";
 
-  /** The name of the subdirectory containing calibrated rates curves. */
+  /** 包含校准速率曲线的子目录的名称。 */
   private static final String CURVES_DIR = "curves";
-  /** The name of the curve groups file. */
+  /** 曲线组文件的名称。 */
   private static final String CURVES_GROUPS_FILE = "groups.csv";
-  /** The name of the curve settings file. */
+  /** 曲线设置文件的名称。 */
   private static final String CURVES_SETTINGS_FILE = "settings.csv";
 
-  /** The name of the subdirectory containing simple market quotes. */
+  /** 包含简单市场报价的子目录的名称。 */
   private static final String QUOTES_DIR = "quotes";
-  /** The name of the quotes file. */
+  /** 报价文件的名称。 */
   private static final String QUOTES_FILE = "quotes.csv";
 
   //-------------------------------------------------------------------------
   /**
-   * Creates an instance from a given classpath resource root location using the class loader
-   * which created this class.
+   * 使用创建此类的类加载器从给定的类路径资源根位置创建实例。
    * <p>
-   * This is designed to handle resource roots which may physically correspond to a directory on
-   * disk, or be located within a jar file.
+   * 这是为处理资源根而设计的，这些资源根可能在物理上对应于磁盘上的一个目录，或者位于JAR文件中。
    * 
-   * @param resourceRoot  the resource root path
+   * @param resourceRoot  资源文件根路径
    * @return the market data builder
    */
   public static ExampleMarketDataBuilder ofResource(String resourceRoot) {
@@ -99,14 +90,12 @@ public abstract class ExampleMarketDataBuilder {
   }
 
   /**
-   * Creates an instance from a given classpath resource root location, using the given class loader
-   * to find the resource.
+   * 使用给定的类加载器查找资源，从给定的类路径资源根位置创建实例。
    * <p>
-   * This is designed to handle resource roots which may physically correspond to a directory on
-   * disk, or be located within a jar file.
+   * 这是为处理资源根而设计的，这些资源根可能在物理上对应于磁盘上的一个目录，或者位于JAR文件中。
    * 
    * @param resourceRoot  the resource root path
-   * @param classLoader  the class loader with which to find the resource
+   * @param classLoader  用于查找资源的类加载器
    * @return the market data builder
    */
   public static ExampleMarketDataBuilder ofResource(String resourceRoot, ClassLoader classLoader) {

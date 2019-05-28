@@ -5,17 +5,17 @@
  */
 package com.opengamma.strata.examples.marketdata;
 
+import com.opengamma.strata.collect.Messages;
+import com.opengamma.strata.collect.io.ResourceLocator;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import com.opengamma.strata.collect.Messages;
-import com.opengamma.strata.collect.io.ResourceLocator;
-
 /**
- * Loads market data from the standard directory structure on disk.
+ * 从磁盘上的标准目录结构加载市场数据。
  */
 public class DirectoryMarketDataBuilder extends ExampleMarketDataBuilder {
 

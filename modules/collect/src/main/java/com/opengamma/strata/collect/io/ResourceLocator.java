@@ -5,7 +5,14 @@
  */
 package com.opengamma.strata.collect.io;
 
-import static com.google.common.base.MoreObjects.firstNonNull;
+import com.google.common.io.ByteSource;
+import com.google.common.io.CharSource;
+import com.google.common.io.Files;
+import com.google.common.io.Resources;
+import com.opengamma.strata.collect.ArgChecker;
+import com.opengamma.strata.collect.Guavate;
+import org.joda.convert.FromString;
+import org.joda.convert.ToString;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -13,21 +20,12 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 
-import org.joda.convert.FromString;
-import org.joda.convert.ToString;
-
-import com.google.common.io.ByteSource;
-import com.google.common.io.CharSource;
-import com.google.common.io.Files;
-import com.google.common.io.Resources;
-import com.opengamma.strata.collect.ArgChecker;
-import com.opengamma.strata.collect.Guavate;
+import static com.google.common.base.MoreObjects.firstNonNull;
 
 /**
- * A locator for a resource, specified as a file, URL, path or classpath resource.
+ * 资源的定位器，指定为文件、URL、路径或类路径资源。
  * <p>
- * An instance of this class provides access to a resource, such as a configuration file.
- * The resource data is accessed using {@link CharSource} or {@link ByteSource}.
+ * 此类的实例提供对资源（如配置文件）的访问。使用 {@link CharSource} or {@link ByteSource}.
  */
 public final class ResourceLocator {
 
