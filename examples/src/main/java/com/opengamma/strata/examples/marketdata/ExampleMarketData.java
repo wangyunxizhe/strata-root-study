@@ -6,12 +6,12 @@
 package com.opengamma.strata.examples.marketdata;
 
 /**
- * Contains utilities for using example market data.
+ * 示例市场数据的类
  */
 public final class ExampleMarketData {
 
   /**
-   * Root resource directory of the built-in example market data
+   * 内置示例市场数据的根资源目录
    */
   private static final String EXAMPLE_MARKET_DATA_ROOT = "example-marketdata";
 
@@ -23,7 +23,7 @@ public final class ExampleMarketData {
 
   //-------------------------------------------------------------------------
   /**
-   * Gets a market data builder for the built-in example market data.
+   * 获取内置示例市场数据的市场数据生成器。
    * 
    * @return the market data builder
    */
