@@ -5,8 +5,6 @@
  */
 package com.opengamma.strata.measure;
 
-import java.util.List;
-
 import com.google.common.collect.ImmutableList;
 import com.opengamma.strata.calc.CalculationRunner;
 import com.opengamma.strata.calc.marketdata.MarketDataFactory;
@@ -14,11 +12,7 @@ import com.opengamma.strata.calc.marketdata.MarketDataFunction;
 import com.opengamma.strata.calc.marketdata.ObservableDataProvider;
 import com.opengamma.strata.calc.marketdata.TimeSeriesProvider;
 import com.opengamma.strata.calc.runner.CalculationFunctions;
-import com.opengamma.strata.measure.bond.BillTradeCalculationFunction;
-import com.opengamma.strata.measure.bond.BondFutureOptionTradeCalculationFunction;
-import com.opengamma.strata.measure.bond.BondFutureTradeCalculationFunction;
-import com.opengamma.strata.measure.bond.CapitalIndexedBondTradeCalculationFunction;
-import com.opengamma.strata.measure.bond.FixedCouponBondTradeCalculationFunction;
+import com.opengamma.strata.measure.bond.*;
 import com.opengamma.strata.measure.capfloor.IborCapFloorTradeCalculationFunction;
 import com.opengamma.strata.measure.credit.CdsIndexTradeCalculationFunction;
 import com.opengamma.strata.measure.credit.CdsTradeCalculationFunction;
@@ -48,14 +42,7 @@ import com.opengamma.strata.product.GenericSecurityPosition;
 import com.opengamma.strata.product.GenericSecurityTrade;
 import com.opengamma.strata.product.SecurityPosition;
 import com.opengamma.strata.product.SecurityTrade;
-import com.opengamma.strata.product.bond.BondFutureOptionPosition;
-import com.opengamma.strata.product.bond.BondFutureOptionTrade;
-import com.opengamma.strata.product.bond.BondFuturePosition;
-import com.opengamma.strata.product.bond.BondFutureTrade;
-import com.opengamma.strata.product.bond.CapitalIndexedBondPosition;
-import com.opengamma.strata.product.bond.CapitalIndexedBondTrade;
-import com.opengamma.strata.product.bond.FixedCouponBondPosition;
-import com.opengamma.strata.product.bond.FixedCouponBondTrade;
+import com.opengamma.strata.product.bond.*;
 import com.opengamma.strata.product.capfloor.IborCapFloorTrade;
 import com.opengamma.strata.product.credit.CdsIndexTrade;
 import com.opengamma.strata.product.credit.CdsTrade;
@@ -76,22 +63,21 @@ import com.opengamma.strata.product.payment.BulletPaymentTrade;
 import com.opengamma.strata.product.swap.SwapTrade;
 import com.opengamma.strata.product.swaption.SwaptionTrade;
 
+import java.util.List;
+
 /**
- * Factory methods for creating standard Strata components.
+ * 创建标准Strata组件的工厂方法。
  * <p>
- * These components are suitable for performing calculations using the built-in asset classes,
- * market data types and pricers.
+ * 这些组件适用于使用内置资产类别、市场数据类型和价格进行计算。
  * <p>
- * The market data factory can create market data values derived from other values.
- * For example it can create calibrated curves given market quotes.
- * However it cannot request market data from an external provider, such as Bloomberg,
- * or look up data from a data store, for example a time series database.
- * Instances of {@link CalculationRunner} are created directly using the static methods on the interface.
+ * 市场数据工厂可以创建从其他值派生的市场数据值。例如，它可以创建给定市场报价的校准曲线。
+ * 但是，它不能从外部提供者（如Bloomberg）请求市场数据，也不能从数据存储中查找数据，例如时间序列数据库。
+ * {@link CalculationRunner}的实例直接使用接口上的静态方法创建。
  */
 public final class StandardComponents {
 
   /**
-   * The standard calculation functions.
+   * 标准计算功能。
    */
   private static final CalculationFunctions STANDARD = CalculationFunctions.of(
       new BulletPaymentTradeCalculationFunction(),
@@ -189,13 +175,12 @@ public final class StandardComponents {
   }
 
   /**
-   * Returns the standard calculation functions.
+   * 返回标准计算函数。
    * <p>
-   * These define how to calculate the standard measures for the standard asset classes.
+   * 定义了如何计算标准资产类的标准度量。
    * <p>
-   * The standard calculation functions require no further configuration and are designed to allow
-   * easy access to all built-in asset class coverage.
-   * The supported asset classes are:
+   * 标准的计算功能不需要进一步的配置，其设计允许轻松访问所有内置资产类别覆盖范围。
+   * 支持的资产类别包括：
    * <ul>
    *  <li>Bond future - {@link BondFutureTrade} and {@link BondFuturePosition}
    *  <li>Bond future option - {@link BondFutureOptionTrade} and {@link BondFutureOptionPosition}
