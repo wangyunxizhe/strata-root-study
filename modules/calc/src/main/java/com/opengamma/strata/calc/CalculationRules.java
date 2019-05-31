@@ -68,13 +68,13 @@ public final class CalculationRules implements ImmutableBean {
     //-------------------------------------------------------------------------
 
     /**
-     * Obtains an instance specifying the functions to use and some additional parameters.
+     * 获取指定要使用的functions和一些附加参数（parameters）的实例。
      * <p>
-     * The output will uses the "natural" {@linkplain ReportingCurrency reporting currency}.
-     * Most functions require a parameter to control their behavior, such as {@code RatesMarketDataLookup}.
+     * 输出将使用“自然”{@linkplain ReportingCurrency reporting currency}。
+     * 大多数函数都需要一个参数来控制它们的行为，例如{@code RatesMarketDataLookup}。
      *
-     * @param functions  the calculation functions
-     * @param parameters the parameters that control the calculation, may be empty
+     * @param functions  计算功能
+     * @param parameters 控制计算的参数，可能为空
      * @return the rules
      */
     public static CalculationRules of(CalculationFunctions functions, CalculationParameter... parameters) {
