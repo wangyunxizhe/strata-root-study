@@ -5,15 +5,10 @@
  */
 package com.opengamma.strata.report.trade;
 
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-
-import org.joda.beans.Bean;
-import org.joda.beans.ImmutableBean;
-import org.joda.beans.JodaBeanUtils;
-import org.joda.beans.MetaBean;
-import org.joda.beans.MetaProperty;
+import com.google.common.collect.ImmutableList;
+import com.opengamma.strata.collect.io.IniFile;
+import com.opengamma.strata.report.ReportTemplate;
+import org.joda.beans.*;
 import org.joda.beans.gen.BeanDefinition;
 import org.joda.beans.gen.PropertyDefinition;
 import org.joda.beans.impl.direct.DirectFieldsBeanBuilder;
@@ -21,28 +16,28 @@ import org.joda.beans.impl.direct.DirectMetaBean;
 import org.joda.beans.impl.direct.DirectMetaProperty;
 import org.joda.beans.impl.direct.DirectMetaPropertyMap;
 
-import com.google.common.collect.ImmutableList;
-import com.opengamma.strata.collect.io.IniFile;
-import com.opengamma.strata.report.ReportTemplate;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
- * Describes the contents and layout of a trade report.
+ * 描述贸易报告的内容和布局。
  */
 @BeanDefinition
 public final class TradeReportTemplate
     implements ReportTemplate, ImmutableBean {
 
   /**
-   * The columns in the report.
+   * 报表中的列。
    */
   @PropertyDefinition(validate = "notNull")
   private final List<TradeReportColumn> columns;
 
   /**
-   * Creates a trade report template by reading a template definition in an ini file.
+   * 通过读取ini文件中的模板定义来创建交易报告模板。
    *
-   * @param ini  the ini file containing the definition of the template
-   * @return a trade report template built from the definition in the ini file
+   * @param ini  包含模板定义的ini文件
+   * @return 根据ini文件中的定义构建的交易报告模板
    */
   public static TradeReportTemplate load(IniFile ini) {
     TradeReportTemplateIniLoader loader = new TradeReportTemplateIniLoader();
