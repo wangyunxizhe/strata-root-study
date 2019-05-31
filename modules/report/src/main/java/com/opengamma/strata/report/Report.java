@@ -5,26 +5,25 @@
  */
 package com.opengamma.strata.report;
 
+import com.google.common.collect.ImmutableList;
+
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
 
-import com.google.common.collect.ImmutableList;
-
 /**
- * Represents a business report.
+ * 表示业务报表的类。
  * <p>
- * A report is a transformation of calculation engine results for a specific purpose, for example
- * a trade report on a list of trades, or a cashflow report on a single trade.
+ * 报表是针对特定目的对计算引擎结果的转换，例如交易列表上的交易报表，或单笔交易上的现金流报表。
  * <p>
- * The report physically represents a table of data, with column headers.
+ * 报表物理上表示一个带有列标题的数据表。
  */
 public interface Report {
 
   /**
-   * Gets the valuation date of the results driving the report.
+   * 获取驱动报表的结果的评估日期。
    * 
    * @return the valuation date
    */
