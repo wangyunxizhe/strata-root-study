@@ -161,10 +161,10 @@ public abstract class ExampleMarketDataBuilder {
   }
 
   /**
-   * Gets the rates market lookup to use with this environment.
+   * 获取用于此环境的RatesMarketDataLookup。
    * 
-   * @param marketDataDate  the date of the market data
-   * @return the rates lookup
+   * @param marketDataDate  市场数据日期
+   * @return the rates lookup（费率查找）
    */
   public RatesMarketDataLookup ratesLookup(LocalDate marketDataDate) {
     SortedMap<LocalDate, RatesCurveGroup> curves = loadAllRatesCurves();
