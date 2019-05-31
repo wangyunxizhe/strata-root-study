@@ -5,22 +5,10 @@
  */
 package com.opengamma.strata.market.curve;
 
-import static java.util.stream.Collectors.toMap;
-
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.stream.Stream;
-
-import org.joda.beans.Bean;
-import org.joda.beans.ImmutableBean;
-import org.joda.beans.JodaBeanUtils;
-import org.joda.beans.MetaBean;
-import org.joda.beans.MetaProperty;
+import com.google.common.collect.ImmutableMap;
+import com.opengamma.strata.basics.currency.Currency;
+import com.opengamma.strata.basics.index.Index;
+import org.joda.beans.*;
 import org.joda.beans.gen.BeanDefinition;
 import org.joda.beans.gen.PropertyDefinition;
 import org.joda.beans.impl.direct.DirectFieldsBeanBuilder;
@@ -30,17 +18,18 @@ import org.joda.beans.impl.direct.DirectMetaPropertyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableMap;
-import com.opengamma.strata.basics.currency.Currency;
-import com.opengamma.strata.basics.index.Index;
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toMap;
 
 /**
- * A group of curves.
+ * 一组曲线。
  * <p>
- * This is used to hold a group of related curves, typically forming a logical set.
- * It is often used to hold the results of a curve calibration.
+ * 这用于保存一组相关曲线，通常形成一个逻辑集。它通常用于保存曲线校准的结果。
  * <p>
- * Curve groups can also be created from a set of existing curves.
+ * 也可以从一组现有曲线创建曲线组。
  */
 @BeanDefinition
 public final class RatesCurveGroup
@@ -49,17 +38,17 @@ public final class RatesCurveGroup
   private static final Logger log = LoggerFactory.getLogger(RatesCurveGroup.class);
 
   /**
-   * The name of the curve group.
+   * 曲线组的名称。
    */
   @PropertyDefinition(validate = "notNull", overrideGet = true)
   private final CurveGroupName name;
   /**
-   * The discount curves in the group, keyed by currency.
+   * 组中的折扣曲线，由货币键控。
    */
   @PropertyDefinition(validate = "notNull")
   private final ImmutableMap<Currency, Curve> discountCurves;
   /**
-   * The forward curves in the group, keyed by index.
+   * 组中的正向曲线，key为索引。
    */
   @PropertyDefinition(validate = "notNull", builderType = "Map<? extends Index, ? extends Curve>")
   private final ImmutableMap<Index, Curve> forwardCurves;
@@ -78,15 +67,13 @@ public final class RatesCurveGroup
   }
 
   /**
-   * Creates a curve group using a curve group definition and some existing curves.
+   * 使用曲线组定义和一些现有曲线创建曲线组。
    * <p>
-   * If there are curves named in the definition which are not present in the curves the group is built using
-   * whatever curves are available.
+   * 如果定义中指定的曲线不在曲线中，则使用可用的任何曲线来构建组。
    * <p>
-   * If there are multiple curves with the same name in the curves one of them is arbitrarily chosen.
+   * 如果曲线中有多条同名曲线，则任意选择其中一条。
    * <p>
-   * Multiple curves with the same name are allowed to support the use case where the list contains the same
-   * curve multiple times. This means the caller doesn't have to filter the input curves to remove duplicates.
+   * 允许多个具有相同名称的曲线支持列表多次包含相同曲线的用例。这意味着调用方不必过滤输入曲线来删除重复项。
    *
    * @param curveGroupDefinition  the definition of a curve group
    * @param curves  some curves

@@ -9,40 +9,38 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
- * A group of curves.
+ * 一组曲线。
  * <p>
- * This is used to hold a group of related curves, typically forming a logical set.
- * It is often used to hold the results of a curve calibration.
+ * 这用于保存一组相关曲线，通常形成一个逻辑集。它通常用于保存曲线校准的结果。
  * <p>
- * Curve groups can also be created from a set of existing curves.
+ * 也可以从一组现有曲线创建曲线组。
  * <p>
- * In Strata v2, this type was converted to an interface.
- * If migrating, change your code to {@link RatesCurveGroup}.
+ * In Strata v2, 此类型已转换为接口。如果正在迁移，请将代码更改为{@link RatesCurveGroup}。
  */
 public interface CurveGroup {
 
-  /**
-   * Gets the name of the curve group.
-   * 
-   * @return the group name
-   */
-  public abstract CurveGroupName getName();
+    /**
+     * Gets the name of the curve group.
+     *
+     * @return the group name
+     */
+    public abstract CurveGroupName getName();
 
-  /**
-   * Finds the curve with the specified name.
-   * <p>
-   * If the curve cannot be found, empty is returned.
-   * 
-   * @param name  the curve name
-   * @return the curve, empty if not found
-   */
-  public abstract Optional<Curve> findCurve(CurveName name);
+    /**
+     * 查找具有指定名称的曲线。
+     * <p>
+     * 如果找不到曲线，则返回空。
+     *
+     * @param name the curve name
+     * @return the curve, empty if not found
+     */
+    public abstract Optional<Curve> findCurve(CurveName name);
 
-  /**
-   * Returns a stream of all curves in the group.
-   *
-   * @return a stream of all curves in the group
-   */
-  public abstract Stream<Curve> stream();
+    /**
+     * Returns a stream of all curves in the group.
+     *
+     * @return a stream of all curves in the group
+     */
+    public abstract Stream<Curve> stream();
 
 }
