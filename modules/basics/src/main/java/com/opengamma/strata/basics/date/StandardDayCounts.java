@@ -5,18 +5,18 @@
  */
 package com.opengamma.strata.basics.date;
 
+import com.opengamma.strata.basics.schedule.Frequency;
+
+import java.time.LocalDate;
+
 import static com.opengamma.strata.basics.date.LocalDateUtils.daysBetween;
 import static com.opengamma.strata.basics.date.LocalDateUtils.doy;
 import static java.lang.Math.toIntExact;
 
-import java.time.LocalDate;
-
-import com.opengamma.strata.basics.schedule.Frequency;
-
 /**
- * Standard day count convention implementations.
+ * 标准日计数规则的实现。
  * <p>
- * See {@link DayCounts} for the description of each.
+ * 请参见{@link DayCounts}了解每个的描述。
  */
 enum StandardDayCounts implements DayCount {
 
