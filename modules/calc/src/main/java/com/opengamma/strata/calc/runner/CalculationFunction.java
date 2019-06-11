@@ -5,10 +5,6 @@
  */
 package com.opengamma.strata.calc.runner;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
 import com.opengamma.strata.basics.CalculationTarget;
 import com.opengamma.strata.basics.ReferenceData;
 import com.opengamma.strata.basics.currency.Currency;
@@ -20,129 +16,126 @@ import com.opengamma.strata.data.scenario.ScenarioArray;
 import com.opengamma.strata.data.scenario.ScenarioFxConvertible;
 import com.opengamma.strata.data.scenario.ScenarioMarketData;
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
 /**
- * Primary interface for all calculation functions that calculate measures.
+ * 用于计算度量值（measures）的所有计算函数的主界面。
  * <p>
- * Implementations of this interface provide the ability to calculate one or more measures
- * for a target (trade) using one or more sets of market data (scenarios).
+ * 此接口的实现提供了使用一组或多组市场数据（场景）为目标（交易）计算一个或多个度量值（measures）的能力。
  * The methods of the function allow the {@link CalculationRunner} to correctly invoke the function:
  * <ul>
  * <li>{@link #targetType()}
- *  - the target type that the function applies to
+ * - 函数应用到的目标类型
  * <li>{@link #supportedMeasures()}
- *  - the set of measures that can be calculated
+ * - 可计算的一组度量值
  * <li>{@link #naturalCurrency(CalculationTarget, ReferenceData)}
- *  - the "natural" currency of the target
+ * - 目标的“自然”货币
  * <li>{@link #requirements(CalculationTarget, Set, CalculationParameters, ReferenceData)}
- *  - the market data requirements for performing the calculation
+ * - 执行计算的市场数据要求
  * <li>{@link #calculate(CalculationTarget, Set, CalculationParameters, ScenarioMarketData, ReferenceData)}
- *  - perform the calculation
+ * - 执行计算
  * </ul>
  * <p>
- * If any of the calculated values contain any currency amounts and implement {@link ScenarioFxConvertible}
- * the calculation runner will automatically convert the amounts into the reporting currency.
+ * 如果任何计算值包含任何货币金额并实现了{@link ScenarioFxConvertible}，计算运行程序将自动将金额转换为报告货币。
  *
- * @param <T>  the type of target handled by this function
+ * @param <T> 由该函数处理的目标类型
  */
 public interface CalculationFunction<T extends CalculationTarget> {
 
-  /**
-   * Gets the target type that this function applies to.
-   * <p>
-   * The target type will typically be a concrete class.
-   *
-   * @return the target type
-   */
-  public abstract Class<T> targetType();
+    /**
+     * 获取此函数应用的目标类型CalculationFunction接口中定义的T的类类型。
+     * <p>
+     * 目标类型通常是一个具体的类。如XXXXX.Class
+     *
+     * @return the target type
+     */
+    public abstract Class<T> targetType();
 
-  /**
-   * Returns the set of measures that the function can calculate.
-   *
-   * @return the read-only set of measures that the function can calculate
-   */
-  public abstract Set<Measure> supportedMeasures();
+    /**
+     * 返回函数可以计算的一组度量值。
+     *
+     * @return the read-only set of measures that the function can calculate（函数可以计算的只读度量集）
+     */
+    public abstract Set<Measure> supportedMeasures();
 
-  /**
-   * Returns an identifier that should uniquely identify the specified target.
-   * <p>
-   * This identifier is used in error messages to identify the target.
-   * This should normally be overridden to provide a suitable identifier.
-   * For example, if the target is a trade, there will typically be a trade identifier available.
-   * <p>
-   * This method must not throw an exception.
-   *
-   * @param target  the target of the calculation
-   * @return the identifier of the target, empty if no suitable identifier available
-   */
-  public default Optional<String> identifier(T target) {
-    return Optional.empty();
-  }
+    /**
+     * 返回一个标识符，该标识符应该是唯一标识指定的目标。
+     * <p>
+     * 错误消息中使用这个标识符识别目标。这通常应该被覆盖以提供合适的标识符。
+     * 例如，如果目标是交易，通常会有一个可用的交易标识符。
+     * <p>
+     * This method must not throw an exception.
+     *
+     * @param target 要计算的目标
+     * @return 目标的标识符，如果没有合适的标识符可用，则为空
+     */
+    public default Optional<String> identifier(T target) {
+        return Optional.empty();
+    }
 
-  /**
-   * Returns the "natural" currency for the specified target.
-   * <p>
-   * This is the currency to which currency amounts are converted if the "natural"
-   * reporting currency is requested using {@link ReportingCurrency#NATURAL}.
-   * Most targets have a "natural" currency, for example the currency of a FRA or
-   * the base currency of an FX forward.
-   * <p>
-   * It is required that all functions that return a currency-convertible measure
-   * must choose a "natural" currency for each trade. The choice must be consistent
-   * not random, given the same trade the same currency must be returned.
-   * This might involve picking, the first leg or base currency from a currency pair.
-   * An exception must only be thrown if the function handles no currency-convertible measures.
-   *
-   * @param target  the target of the calculation
-   * @param refData  the reference data to be used in the calculation
-   * @return the "natural" currency of the target
-   * @throws IllegalStateException if the function calculates no currency-convertible measures
-   */
-  public abstract Currency naturalCurrency(T target, ReferenceData refData);
+    /**
+     * 返回指定目标的“自然”货币。
+     * <p>
+     * 如果使用{@link ReportingCurrency#NATURAL}请求“自然”报告货币，则将货币金额转换为该货币。
+     * 大多数目标货币都是“自然”货币，例如FRA货币或外汇远期的基准货币。
+     * <p>
+     * 要求所有返回货币可兑换措施的函数必须为每笔交易选择一种“自然”货币。
+     * 选择必须是一致的，而不是随机的，因为相同的交易必须返回相同的货币。
+     * 这可能涉及从货币对中选择第一货币或基础货币。
+     * 只有当函数不处理货币可兑换措施时，才必须抛出异常。
+     * <p>
+     *
+     * @param target  要计算的目标
+     * @param refData 计算中使用的参考数据
+     * @return the "natural" currency of the target
+     * @throws IllegalStateException 如果函数没有计算货币可兑换的度量
+     */
+    public abstract Currency naturalCurrency(T target, ReferenceData refData);
 
-  /**
-   * Determines the market data required by this function to perform its calculations.
-   * <p>
-   * Any market data needed by the {@code calculate} method should be specified.
-   * <p>
-   * The set of measures may include measures that are not supported by this function.
-   *
-   * @param target  the target of the calculation
-   * @param measures  the set of measures to be calculated
-   * @param parameters  the parameters that affect how the calculation is performed
-   * @param refData  the reference data to be used in the calculation
-   * @return the requirements specifying the market data the function needs to perform calculations
-   */
-  public abstract FunctionRequirements requirements(
-      T target,
-      Set<Measure> measures,
-      CalculationParameters parameters,
-      ReferenceData refData);
+    /**
+     * 确定此函数执行计算所需的市场数据。
+     * <p>
+     * 应指定{@code calculate}方法所需的市场数据。
+     * <p>
+     * 一组度量可以包括此函数不支持的度量。
+     *
+     * @param target     要计算的目标
+     * @param measures   要计算的一组度量
+     * @param parameters 影响执行计算的参数
+     * @param refData    计算中使用的参考数据
+     * @return 指定函数执行计算所需的市场数据的需求
+     */
+    public abstract FunctionRequirements requirements(
+            T target,
+            Set<Measure> measures,
+            CalculationParameters parameters,
+            ReferenceData refData);
 
-  /**
-   * Calculates values of multiple measures for the target using multiple sets of market data.
-   * <p>
-   * The set of measures must only contain measures that the function supports,
-   * as returned by {@link #supportedMeasures()}. The market data must provide at least the
-   * set of data requested by {@link #requirements(CalculationTarget, Set, CalculationParameters, ReferenceData)}.
-   * <p>
-   * The result of this method will often be an instance of {@link ScenarioArray}, which
-   * handles the common case where there is one calculated value for each scenario.
-   * However, it is also possible for the function to calculate an aggregated result, such
-   * as the maximum or minimum value across all scenarios, in which case the result would
-   * not implement {@code ScenarioArray}.
-   *
-   * @param target  the target of the calculation
-   * @param measures  the set of measures to calculate
-   * @param parameters  the parameters that affect how the calculation is performed
-   * @param marketData  the multi-scenario market data to be used in the calculation
-   * @param refData  the reference data to be used in the calculation
-   * @return the read-only map of calculated values, keyed by their measure
-   */
-  public abstract Map<Measure, Result<?>> calculate(
-      T target,
-      Set<Measure> measures,
-      CalculationParameters parameters,
-      ScenarioMarketData marketData,
-      ReferenceData refData);
+    /**
+     * 使用多个市场数据集计算目标的多个度量值。
+     * <p>
+     * 一组度量必须只包含函数支持的度量，就像{@link #supportedMeasures()}返回的那样。
+     * 市场数据必须至少提供{{@link #requirements(CalculationTarget, Set, CalculationParameters, ReferenceData)}
+     * 要求的数据集。
+     * <p>
+     * 这个方法的结果通常是{@link ScenarioArray}的一个实例，它处理每个场景都有一个计算值的常见情况。
+     * 但是，函数也可以计算聚合的结果，
+     * 例如所有场景的最大值或最小值，在这种情况下，结果不会实现{@code ScenarioArray}。
+     *
+     * @param target     要计算的目标
+     * @param measures   要计算的一组度量
+     * @param parameters 影响执行计算的参数
+     * @param marketData 将多情景的市场数据用于计算
+     * @param refData    计算中使用的参考数据
+     * @return 计算值的只读映射，key为Measure
+     */
+    public abstract Map<Measure, Result<?>> calculate(
+            T target,
+            Set<Measure> measures,
+            CalculationParameters parameters,
+            ScenarioMarketData marketData,
+            ReferenceData refData);
 
 }
