@@ -5,11 +5,16 @@
  */
 package com.opengamma.strata.calc.runner;
 
-import static com.opengamma.strata.collect.Guavate.toImmutableList;
-
-import java.lang.invoke.MethodHandles;
-import java.util.List;
-
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ListMultimap;
+import com.opengamma.strata.basics.CalculationTarget;
+import com.opengamma.strata.basics.ReferenceData;
+import com.opengamma.strata.basics.ResolvableCalculationTarget;
+import com.opengamma.strata.calc.*;
+import com.opengamma.strata.calc.marketdata.MarketDataRequirements;
+import com.opengamma.strata.calc.marketdata.MarketDataRequirementsBuilder;
+import com.opengamma.strata.collect.Messages;
 import org.joda.beans.ImmutableBean;
 import org.joda.beans.JodaBeanUtils;
 import org.joda.beans.MetaBean;
@@ -18,27 +23,16 @@ import org.joda.beans.gen.BeanDefinition;
 import org.joda.beans.gen.PropertyDefinition;
 import org.joda.beans.impl.light.LightMetaBean;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ListMultimap;
-import com.opengamma.strata.basics.CalculationTarget;
-import com.opengamma.strata.basics.ReferenceData;
-import com.opengamma.strata.basics.ResolvableCalculationTarget;
-import com.opengamma.strata.calc.CalculationRules;
-import com.opengamma.strata.calc.CalculationRunner;
-import com.opengamma.strata.calc.Column;
-import com.opengamma.strata.calc.Measure;
-import com.opengamma.strata.calc.ReportingCurrency;
-import com.opengamma.strata.calc.marketdata.MarketDataRequirements;
-import com.opengamma.strata.calc.marketdata.MarketDataRequirementsBuilder;
-import com.opengamma.strata.collect.Messages;
+import java.lang.invoke.MethodHandles;
+import java.util.List;
+
+import static com.opengamma.strata.collect.Guavate.toImmutableList;
 
 /**
- * The tasks that will be used to perform the calculations.
+ * 用于执行计算的任务。
  * <p>
- * This captures the targets, columns and tasks that define the result grid.
- * Each task can be executed to produce the result. Applications will typically
- * use {@link CalculationRunner} or {@link CalculationTaskRunner} to execute the tasks.
+ * 这将捕获定义结果网格的目标、列和任务。可以执行每个任务来生成结果。
+ * 应用程序通常使用{@link CalculationRunner}或{@link CalculationTaskRunner}来执行任务。
  */
 @BeanDefinition(style = "light")
 public final class CalculationTasks implements ImmutableBean {
@@ -46,34 +40,33 @@ public final class CalculationTasks implements ImmutableBean {
   /**
    * The targets that calculations will be performed on.
    * <p>
-   * The result of the calculations will be a grid where each row is taken from this list.
+   * 计算的结果将是一个网格，其中的每一行都取自这个列表。
    */
   @PropertyDefinition(validate = "notEmpty")
   private final List<CalculationTarget> targets;
   /**
    * The columns that will be calculated.
    * <p>
-   * The result of the calculations will be a grid where each column is taken from this list.
+   * 计算的结果将是一个网格，其中的每一列都取自这个列表。
    */
   @PropertyDefinition(validate = "notEmpty")
   private final List<Column> columns;
   /**
    * The tasks that perform the individual calculations.
    * <p>
-   * The results can be visualized as a grid, with a row for each target and a column for each measure.
-   * Each task can calculate the result for one or more cells in the grid.
+   * 结果可以可视化为一个网格，每个目标有一行，每个度量值有一列。每个任务都可以计算网格中一个或多个单元格的结果。
    */
   @PropertyDefinition(validate = "notEmpty")
   private final List<CalculationTask> tasks;
 
   //-------------------------------------------------------------------------
   /**
-   * Obtains an instance from a set of targets, columns and rules.
+   * 从一组目标、列和规则中获取实例。
    * <p>
-   * The targets will typically be trades.
-   * The columns represent the measures to calculate.
+   * 目标通常是trades。
+   * columns表示要计算的度量值。
    * <p>
-   * Any target that implements {@link ResolvableCalculationTarget} will result in a failed task.
+   * 任何实现{@link ResolvableCalculationTarget}的目标都会导致任务失败。
    * 
    * @param rules  the rules defining how the calculation is performed
    * @param targets  the targets for which values of the measures will be calculated
@@ -89,17 +82,16 @@ public final class CalculationTasks implements ImmutableBean {
   }
 
   /**
-   * Obtains an instance from a set of targets, columns and rules, resolving the targets.
+   * 从一组目标、列和规则中获取实例，并解析目标。
    * <p>
-   * The targets will typically be trades and positions.
-   * The columns represent the measures to calculate.
+   * 目标通常是trades和positions。columns表示要计算的度量。
    * <p>
-   * The targets will be resolved if they implement {@link ResolvableCalculationTarget}.
+   * 如果这些targets实现了{@link ResolvableCalculationTarget}，那么它们将被解析。
    * 
    * @param rules  the rules defining how the calculation is performed
    * @param targets  the targets for which values of the measures will be calculated
    * @param columns  the columns that will be calculated
-   * @param refData  the reference data to use to resolve the targets
+   * @param refData  用于解析目标的引用数据
    * @return the calculation tasks
    */
   public static CalculationTasks of(
@@ -115,7 +107,7 @@ public final class CalculationTasks implements ImmutableBean {
             .map(column -> column.combineWithDefaults(rules.getReportingCurrency(), rules.getParameters()))
             .collect(toImmutableList());
 
-    // loop around the targets, then the columns, to build the tasks
+    // 循环目标，然后是列，以构建任务
     ImmutableList.Builder<CalculationTask> taskBuilder = ImmutableList.builder();
     for (int rowIndex = 0; rowIndex < targets.size(); rowIndex++) {
       CalculationTarget target = resolveTarget(targets.get(rowIndex), refData);
@@ -130,7 +122,7 @@ public final class CalculationTasks implements ImmutableBean {
       taskBuilder.addAll(targetTasks);
     }
 
-    // calculation tasks holds the original user-specified columns, not the derived ones
+    // 计算任务保存原始的用户指定列，而不是派生列
     return new CalculationTasks(taskBuilder.build(), columns);
   }
 
@@ -147,14 +139,14 @@ public final class CalculationTasks implements ImmutableBean {
     return target;
   }
 
-  // creates the tasks for a single target
+  // 为单个目标创建任务
   private static List<CalculationTask> createTargetTasks(
       CalculationTarget resolvedTarget,
       int rowIndex,
       CalculationFunction<?> function,
       List<Column> columns) {
 
-    // create the cells and group them
+    // 创建单元格并对它们进行分组
     ListMultimap<CalculationParameters, CalculationTaskCell> grouped = ArrayListMultimap.create();
     for (int colIndex = 0; colIndex < columns.size(); colIndex++) {
       Column column = columns.get(colIndex);
@@ -162,7 +154,7 @@ public final class CalculationTasks implements ImmutableBean {
 
       ReportingCurrency reportingCurrency = column.getReportingCurrency().orElse(ReportingCurrency.NATURAL);
       CalculationTaskCell cell = CalculationTaskCell.of(rowIndex, colIndex, measure, reportingCurrency);
-      // group to find cells that can be shared, with same mappings and params (minus reporting currency)
+      // 找到可以共享的单元格，使用相同的映射和参数(减去报告货币)
       CalculationParameters params = column.getParameters().filter(resolvedTarget, measure);
       grouped.put(params, cell);
     }
@@ -189,10 +181,10 @@ public final class CalculationTasks implements ImmutableBean {
 
   //-------------------------------------------------------------------------
   /**
-   * Creates an instance.
+   * 私有化构造函数
    * 
-   * @param tasks  the tasks that perform the calculations
-   * @param columns  the columns that define the calculations
+   * @param tasks  执行计算的任务
+   * @param columns  定义计算的列
    */
   private CalculationTasks(List<CalculationTask> tasks, List<Column> columns) {
     this.columns = ImmutableList.copyOf(columns);
