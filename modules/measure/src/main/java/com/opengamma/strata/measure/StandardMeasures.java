@@ -9,7 +9,7 @@ import com.opengamma.strata.calc.ImmutableMeasure;
 import com.opengamma.strata.calc.Measure;
 
 /**
- * Strata计算用的标准度量集。
+ * Strata计算用的标准度量集 。
  */
 final class StandardMeasures {
 
