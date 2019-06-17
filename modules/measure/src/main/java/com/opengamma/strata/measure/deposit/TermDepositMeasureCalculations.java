@@ -21,216 +21,216 @@ import com.opengamma.strata.pricer.sensitivity.MarketQuoteSensitivityCalculator;
 import com.opengamma.strata.product.deposit.ResolvedTermDepositTrade;
 
 /**
- * Multi-scenario measure calculations for Term Deposit trades.
+ * 定期存款交易的多场景度量计算。
  * <p>
- * Each method corresponds to a measure, typically calculated by one or more calls to the pricer.
+ * 每个方法对应于一个Measure，通常通过对价格的一个或多个调用来计算。
  */
 final class TermDepositMeasureCalculations {
 
-  /**
-   * Default implementation.
-   */
-  public static final TermDepositMeasureCalculations DEFAULT = new TermDepositMeasureCalculations(
-      DiscountingTermDepositTradePricer.DEFAULT);
-  /**
-   * The market quote sensitivity calculator.
-   */
-  private static final MarketQuoteSensitivityCalculator MARKET_QUOTE_SENS = MarketQuoteSensitivityCalculator.DEFAULT;
-  /**
-   * One basis point, expressed as a {@code double}.
-   */
-  private static final double ONE_BASIS_POINT = 1e-4;
+    /**
+     * Default implementation.
+     */
+    public static final TermDepositMeasureCalculations DEFAULT = new TermDepositMeasureCalculations(
+            DiscountingTermDepositTradePricer.DEFAULT);
+    /**
+     * 市场报价敏感度计算器。
+     */
+    private static final MarketQuoteSensitivityCalculator MARKET_QUOTE_SENS = MarketQuoteSensitivityCalculator.DEFAULT;
+    /**
+     * 一个基点，表示为{@code double}.
+     */
+    private static final double ONE_BASIS_POINT = 1e-4;
 
-  /**
-   * Pricer for {@link ResolvedTermDepositTrade}.
-   */
-  private final DiscountingTermDepositTradePricer tradePricer;
+    /**
+     * Pricer for {@link ResolvedTermDepositTrade}.
+     */
+    private final DiscountingTermDepositTradePricer tradePricer;
 
-  /**
-   * Creates an instance.
-   * 
-   * @param tradePricer  the pricer for {@link ResolvedTermDepositTrade}
-   */
-  TermDepositMeasureCalculations(
-      DiscountingTermDepositTradePricer tradePricer) {
-    this.tradePricer = ArgChecker.notNull(tradePricer, "tradePricer");
-  }
+    /**
+     * Creates an instance.
+     *
+     * @param tradePricer the pricer for {@link ResolvedTermDepositTrade}
+     */
+    TermDepositMeasureCalculations(
+            DiscountingTermDepositTradePricer tradePricer) {
+        this.tradePricer = ArgChecker.notNull(tradePricer, "tradePricer");
+    }
 
-  //-------------------------------------------------------------------------
-  // calculates present value for all scenarios
-  CurrencyScenarioArray presentValue(
-      ResolvedTermDepositTrade trade,
-      RatesScenarioMarketData marketData) {
+    //-------------------------------------------------------------------------
+    // calculates present value for all scenarios
+    CurrencyScenarioArray presentValue(
+            ResolvedTermDepositTrade trade,
+            RatesScenarioMarketData marketData) {
 
-    return CurrencyScenarioArray.of(
-        marketData.getScenarioCount(),
-        i -> presentValue(trade, marketData.scenario(i).ratesProvider()));
-  }
+        return CurrencyScenarioArray.of(
+                marketData.getScenarioCount(),
+                i -> presentValue(trade, marketData.scenario(i).ratesProvider()));
+    }
 
-  // present value for one scenario
-  CurrencyAmount presentValue(
-      ResolvedTermDepositTrade trade,
-      RatesProvider ratesProvider) {
+    // present value for one scenario
+    CurrencyAmount presentValue(
+            ResolvedTermDepositTrade trade,
+            RatesProvider ratesProvider) {
 
-    return tradePricer.presentValue(trade, ratesProvider);
-  }
+        return tradePricer.presentValue(trade, ratesProvider);
+    }
 
-  //-------------------------------------------------------------------------
-  // calculates calibrated sum PV01 for all scenarios
-  MultiCurrencyScenarioArray pv01CalibratedSum(
-      ResolvedTermDepositTrade trade,
-      RatesScenarioMarketData marketData) {
+    //-------------------------------------------------------------------------
+    // calculates calibrated sum PV01 for all scenarios
+    MultiCurrencyScenarioArray pv01CalibratedSum(
+            ResolvedTermDepositTrade trade,
+            RatesScenarioMarketData marketData) {
 
-    return MultiCurrencyScenarioArray.of(
-        marketData.getScenarioCount(),
-        i -> pv01CalibratedSum(trade, marketData.scenario(i).ratesProvider()));
-  }
+        return MultiCurrencyScenarioArray.of(
+                marketData.getScenarioCount(),
+                i -> pv01CalibratedSum(trade, marketData.scenario(i).ratesProvider()));
+    }
 
-  // calibrated sum PV01 for one scenario
-  MultiCurrencyAmount pv01CalibratedSum(
-      ResolvedTermDepositTrade trade,
-      RatesProvider ratesProvider) {
+    // calibrated sum PV01 for one scenario
+    MultiCurrencyAmount pv01CalibratedSum(
+            ResolvedTermDepositTrade trade,
+            RatesProvider ratesProvider) {
 
-    PointSensitivities pointSensitivity = tradePricer.presentValueSensitivity(trade, ratesProvider);
-    return ratesProvider.parameterSensitivity(pointSensitivity).total().multipliedBy(ONE_BASIS_POINT);
-  }
+        PointSensitivities pointSensitivity = tradePricer.presentValueSensitivity(trade, ratesProvider);
+        return ratesProvider.parameterSensitivity(pointSensitivity).total().multipliedBy(ONE_BASIS_POINT);
+    }
 
-  //-------------------------------------------------------------------------
-  // calculates calibrated bucketed PV01 for all scenarios
-  ScenarioArray<CurrencyParameterSensitivities> pv01CalibratedBucketed(
-      ResolvedTermDepositTrade trade,
-      RatesScenarioMarketData marketData) {
+    //-------------------------------------------------------------------------
+    // calculates calibrated bucketed PV01 for all scenarios
+    ScenarioArray<CurrencyParameterSensitivities> pv01CalibratedBucketed(
+            ResolvedTermDepositTrade trade,
+            RatesScenarioMarketData marketData) {
 
-    return ScenarioArray.of(
-        marketData.getScenarioCount(),
-        i -> pv01CalibratedBucketed(trade, marketData.scenario(i).ratesProvider()));
-  }
+        return ScenarioArray.of(
+                marketData.getScenarioCount(),
+                i -> pv01CalibratedBucketed(trade, marketData.scenario(i).ratesProvider()));
+    }
 
-  // calibrated bucketed PV01 for one scenario
-  CurrencyParameterSensitivities pv01CalibratedBucketed(
-      ResolvedTermDepositTrade trade,
-      RatesProvider ratesProvider) {
+    // calibrated bucketed PV01 for one scenario
+    CurrencyParameterSensitivities pv01CalibratedBucketed(
+            ResolvedTermDepositTrade trade,
+            RatesProvider ratesProvider) {
 
-    PointSensitivities pointSensitivity = tradePricer.presentValueSensitivity(trade, ratesProvider);
-    return ratesProvider.parameterSensitivity(pointSensitivity).multipliedBy(ONE_BASIS_POINT);
-  }
+        PointSensitivities pointSensitivity = tradePricer.presentValueSensitivity(trade, ratesProvider);
+        return ratesProvider.parameterSensitivity(pointSensitivity).multipliedBy(ONE_BASIS_POINT);
+    }
 
-  //-------------------------------------------------------------------------
-  // calculates market quote sum PV01 for all scenarios
-  MultiCurrencyScenarioArray pv01MarketQuoteSum(
-      ResolvedTermDepositTrade trade,
-      RatesScenarioMarketData marketData) {
+    //-------------------------------------------------------------------------
+    // calculates market quote sum PV01 for all scenarios
+    MultiCurrencyScenarioArray pv01MarketQuoteSum(
+            ResolvedTermDepositTrade trade,
+            RatesScenarioMarketData marketData) {
 
-    return MultiCurrencyScenarioArray.of(
-        marketData.getScenarioCount(),
-        i -> pv01MarketQuoteSum(trade, marketData.scenario(i).ratesProvider()));
-  }
+        return MultiCurrencyScenarioArray.of(
+                marketData.getScenarioCount(),
+                i -> pv01MarketQuoteSum(trade, marketData.scenario(i).ratesProvider()));
+    }
 
-  // market quote sum PV01 for one scenario
-  MultiCurrencyAmount pv01MarketQuoteSum(
-      ResolvedTermDepositTrade trade,
-      RatesProvider ratesProvider) {
+    // market quote sum PV01 for one scenario
+    MultiCurrencyAmount pv01MarketQuoteSum(
+            ResolvedTermDepositTrade trade,
+            RatesProvider ratesProvider) {
 
-    PointSensitivities pointSensitivity = tradePricer.presentValueSensitivity(trade, ratesProvider);
-    CurrencyParameterSensitivities parameterSensitivity = ratesProvider.parameterSensitivity(pointSensitivity);
-    return MARKET_QUOTE_SENS.sensitivity(parameterSensitivity, ratesProvider).total().multipliedBy(ONE_BASIS_POINT);
-  }
+        PointSensitivities pointSensitivity = tradePricer.presentValueSensitivity(trade, ratesProvider);
+        CurrencyParameterSensitivities parameterSensitivity = ratesProvider.parameterSensitivity(pointSensitivity);
+        return MARKET_QUOTE_SENS.sensitivity(parameterSensitivity, ratesProvider).total().multipliedBy(ONE_BASIS_POINT);
+    }
 
-  //-------------------------------------------------------------------------
-  // calculates market quote bucketed PV01 for all scenarios
-  ScenarioArray<CurrencyParameterSensitivities> pv01MarketQuoteBucketed(
-      ResolvedTermDepositTrade trade,
-      RatesScenarioMarketData marketData) {
+    //-------------------------------------------------------------------------
+    // calculates market quote bucketed PV01 for all scenarios
+    ScenarioArray<CurrencyParameterSensitivities> pv01MarketQuoteBucketed(
+            ResolvedTermDepositTrade trade,
+            RatesScenarioMarketData marketData) {
 
-    return ScenarioArray.of(
-        marketData.getScenarioCount(),
-        i -> pv01MarketQuoteBucketed(trade, marketData.scenario(i).ratesProvider()));
-  }
+        return ScenarioArray.of(
+                marketData.getScenarioCount(),
+                i -> pv01MarketQuoteBucketed(trade, marketData.scenario(i).ratesProvider()));
+    }
 
-  // market quote bucketed PV01 for one scenario
-  CurrencyParameterSensitivities pv01MarketQuoteBucketed(
-      ResolvedTermDepositTrade trade,
-      RatesProvider ratesProvider) {
+    // market quote bucketed PV01 for one scenario
+    CurrencyParameterSensitivities pv01MarketQuoteBucketed(
+            ResolvedTermDepositTrade trade,
+            RatesProvider ratesProvider) {
 
-    PointSensitivities pointSensitivity = tradePricer.presentValueSensitivity(trade, ratesProvider);
-    CurrencyParameterSensitivities parameterSensitivity = ratesProvider.parameterSensitivity(pointSensitivity);
-    return MARKET_QUOTE_SENS.sensitivity(parameterSensitivity, ratesProvider).multipliedBy(ONE_BASIS_POINT);
-  }
+        PointSensitivities pointSensitivity = tradePricer.presentValueSensitivity(trade, ratesProvider);
+        CurrencyParameterSensitivities parameterSensitivity = ratesProvider.parameterSensitivity(pointSensitivity);
+        return MARKET_QUOTE_SENS.sensitivity(parameterSensitivity, ratesProvider).multipliedBy(ONE_BASIS_POINT);
+    }
 
-  //-------------------------------------------------------------------------
-  // calculates par rate for all scenarios
-  DoubleScenarioArray parRate(
-      ResolvedTermDepositTrade trade,
-      RatesScenarioMarketData marketData) {
+    //-------------------------------------------------------------------------
+    // calculates par rate for all scenarios
+    DoubleScenarioArray parRate(
+            ResolvedTermDepositTrade trade,
+            RatesScenarioMarketData marketData) {
 
-    return DoubleScenarioArray.of(
-        marketData.getScenarioCount(),
-        i -> parRate(trade, marketData.scenario(i).ratesProvider()));
-  }
+        return DoubleScenarioArray.of(
+                marketData.getScenarioCount(),
+                i -> parRate(trade, marketData.scenario(i).ratesProvider()));
+    }
 
-  // par rate for one scenario
-  double parRate(
-      ResolvedTermDepositTrade trade,
-      RatesProvider ratesProvider) {
+    // par rate for one scenario
+    double parRate(
+            ResolvedTermDepositTrade trade,
+            RatesProvider ratesProvider) {
 
-    return tradePricer.parRate(trade, ratesProvider);
-  }
+        return tradePricer.parRate(trade, ratesProvider);
+    }
 
-  //-------------------------------------------------------------------------
-  // calculates par spread for all scenarios
-  DoubleScenarioArray parSpread(
-      ResolvedTermDepositTrade trade,
-      RatesScenarioMarketData marketData) {
+    //-------------------------------------------------------------------------
+    // calculates par spread for all scenarios
+    DoubleScenarioArray parSpread(
+            ResolvedTermDepositTrade trade,
+            RatesScenarioMarketData marketData) {
 
-    return DoubleScenarioArray.of(
-        marketData.getScenarioCount(),
-        i -> parSpread(trade, marketData.scenario(i).ratesProvider()));
-  }
+        return DoubleScenarioArray.of(
+                marketData.getScenarioCount(),
+                i -> parSpread(trade, marketData.scenario(i).ratesProvider()));
+    }
 
-  // par spread for one scenario
-  double parSpread(
-      ResolvedTermDepositTrade trade,
-      RatesProvider ratesProvider) {
+    // par spread for one scenario
+    double parSpread(
+            ResolvedTermDepositTrade trade,
+            RatesProvider ratesProvider) {
 
-    return tradePricer.parSpread(trade, ratesProvider);
-  }
+        return tradePricer.parSpread(trade, ratesProvider);
+    }
 
-  //-------------------------------------------------------------------------
-  // calculates currency exposure for all scenarios
-  MultiCurrencyScenarioArray currencyExposure(
-      ResolvedTermDepositTrade trade,
-      RatesScenarioMarketData marketData) {
+    //-------------------------------------------------------------------------
+    // calculates currency exposure for all scenarios
+    MultiCurrencyScenarioArray currencyExposure(
+            ResolvedTermDepositTrade trade,
+            RatesScenarioMarketData marketData) {
 
-    return MultiCurrencyScenarioArray.of(
-        marketData.getScenarioCount(),
-        i -> currencyExposure(trade, marketData.scenario(i).ratesProvider()));
-  }
+        return MultiCurrencyScenarioArray.of(
+                marketData.getScenarioCount(),
+                i -> currencyExposure(trade, marketData.scenario(i).ratesProvider()));
+    }
 
-  // currency exposure for one scenario
-  MultiCurrencyAmount currencyExposure(
-      ResolvedTermDepositTrade trade,
-      RatesProvider ratesProvider) {
+    // currency exposure for one scenario
+    MultiCurrencyAmount currencyExposure(
+            ResolvedTermDepositTrade trade,
+            RatesProvider ratesProvider) {
 
-    return tradePricer.currencyExposure(trade, ratesProvider);
-  }
+        return tradePricer.currencyExposure(trade, ratesProvider);
+    }
 
-  //-------------------------------------------------------------------------
-  // calculates current cash for all scenarios
-  CurrencyScenarioArray currentCash(
-      ResolvedTermDepositTrade trade,
-      RatesScenarioMarketData marketData) {
+    //-------------------------------------------------------------------------
+    // calculates current cash for all scenarios
+    CurrencyScenarioArray currentCash(
+            ResolvedTermDepositTrade trade,
+            RatesScenarioMarketData marketData) {
 
-    return CurrencyScenarioArray.of(
-        marketData.getScenarioCount(),
-        i -> currentCash(trade, marketData.scenario(i).ratesProvider()));
-  }
+        return CurrencyScenarioArray.of(
+                marketData.getScenarioCount(),
+                i -> currentCash(trade, marketData.scenario(i).ratesProvider()));
+    }
 
-  // current cash for one scenario
-  CurrencyAmount currentCash(
-      ResolvedTermDepositTrade trade,
-      RatesProvider ratesProvider) {
+    // current cash for one scenario
+    CurrencyAmount currentCash(
+            ResolvedTermDepositTrade trade,
+            RatesProvider ratesProvider) {
 
-    return tradePricer.currentCash(trade, ratesProvider);
-  }
+        return tradePricer.currentCash(trade, ratesProvider);
+    }
 
 }
